@@ -5,6 +5,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,6 +21,29 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      - name: Ensure release keystore exists
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -f app/release.jks ]; then
+            echo "Keystore already exists in the repo, skipping generation."
+          else
+            echo "No keystore found yet, generating a new one..."
+            keytool -genkeypair -v -keystore app/release.jks \
+              -alias "$KEY_ALIAS" \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "$KEYSTORE_PASSWORD" \
+              -keypass "$KEY_PASSWORD" \
+              -dname "CN=NiksamGenerators, OU=NiksamGenerators, O=NiksamGenerators, L=Tehran, S=Tehran, C=IR"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -f app/release.jks
+            git commit -m "Add release keystore for signing"
+            git push
+          fi
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4

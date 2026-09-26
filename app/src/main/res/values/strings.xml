@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">نیک سام ژنراتور</string>
+    <string name="base_url">https://niksamgenerators.com/</string>
+    <string name="no_internet">اتصال اینترنت برقرار نیست</string>
+    <string name="retry">تلاش مجدد</string>
+    <string name="back">بازگشت</string>
+    <string name="search">جستجو</string>
+    <string name="search_hint">دنبال چه محصولی می‌گردید؟</string>
+    <string name="share">اشتراک‌گذاری</string>
+    <string name="favorite">علاقه‌مندی‌ها</string>
+</resources>

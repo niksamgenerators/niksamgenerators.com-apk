@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- HTTPS به niksamgenerators.com و زیردامنه‌هاش مجاز است -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">niksamgenerators.com</domain>
+    </domain-config>
+
+    <!-- درگاه‌های پرداخت رایج ایرانی برای ریدایرکت پرداخت (اگر سایت از این درگاه‌ها استفاده نمی‌کنه، این بلاک رو حذف کن؛ اگر درگاه دیگه‌ای داره، دامنه‌اش رو اینجا اضافه کن) -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">zarinpal.com</domain>
+        <domain includeSubdomains="true">idpay.ir</domain>
+        <domain includeSubdomains="true">zibal.ir</domain>
+        <domain includeSubdomains="true">nextpay.org</domain>
+        <domain includeSubdomains="true">shaparak.ir</domain>
+    </domain-config>
+</network-security-config>

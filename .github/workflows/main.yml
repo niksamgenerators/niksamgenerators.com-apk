@@ -19,11 +19,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Decode Keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | tr -d '[:space:]' | base64 --decode > app/release.jks
-          ls -la app/release.jks
-
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:

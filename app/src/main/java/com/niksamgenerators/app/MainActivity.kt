@@ -9,8 +9,6 @@ import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.webkit.CookieManager
 import android.webkit.SslErrorHandler
 import android.webkit.ValueCallback
@@ -25,16 +23,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import com.google.android.material.card.MaterialCardView
 
 class MainActivity : AppCompatActivity() {
 
     private val BASE_URL = "https://niksamgenerators.com/"
-    private val FAVORITE_URL = "https://niksamgenerators.com/wishlist/"
 
     private val allowedDomains = listOf(
         "niksamgenerators.com"
@@ -47,17 +41,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var offlineLayout: LinearLayout
     private lateinit var loadingLayout: LinearLayout
-    private lateinit var backButtonCard: MaterialCardView
-
-    private lateinit var homeSearchBar: MaterialCardView
-    private lateinit var homeSearchInput: EditText
-    private lateinit var homeSearchIcon: ImageView
-
-    private lateinit var shareButtonCard: MaterialCardView
-    private lateinit var favoriteButtonCard: MaterialCardView
-
-    private enum class PageMode { HOME, OTHER }
-    private var currentPageMode: PageMode = PageMode.OTHER
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
 
@@ -91,14 +74,6 @@ class MainActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         offlineLayout = findViewById(R.id.offlineLayout)
         loadingLayout = findViewById(R.id.loadingLayout)
-        backButtonCard = findViewById(R.id.backButtonCard)
-
-        homeSearchBar = findViewById(R.id.homeSearchBar)
-        homeSearchInput = findViewById(R.id.homeSearchInput)
-        homeSearchIcon = findViewById(R.id.homeSearchIcon)
-
-        shareButtonCard = findViewById(R.id.shareButtonCard)
-        favoriteButtonCard = findViewById(R.id.favoriteButtonCard)
 
         findViewById<Button>(R.id.retryButton).setOnClickListener {
             if (isOnline()) {
@@ -106,32 +81,6 @@ class MainActivity : AppCompatActivity() {
                 showLoadingOverlay()
                 webView.reload()
             }
-        }
-
-        backButtonCard.setOnClickListener {
-            if (webView.canGoBack()) {
-                webView.goBack()
-            }
-        }
-
-        shareButtonCard.setOnClickListener {
-            shareCurrentPage()
-        }
-
-        favoriteButtonCard.setOnClickListener {
-            webView.loadUrl(FAVORITE_URL)
-        }
-
-        homeSearchInput.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                performHomeSearch()
-                true
-            } else {
-                false
-            }
-        }
-        homeSearchIcon.setOnClickListener {
-            performHomeSearch()
         }
 
         setupWebView()
@@ -200,46 +149,6 @@ class MainActivity : AppCompatActivity() {
         webView.loadUrl(targetUrl)
     }
 
-    private fun performHomeSearch() {
-        val query = homeSearchInput.text?.toString()?.trim().orEmpty()
-        if (query.isEmpty()) {
-            homeSearchInput.requestFocus()
-            return
-        }
-        hideKeyboard()
-        val searchUrl = BASE_URL + "?s=" + Uri.encode(query)
-        webView.loadUrl(searchUrl)
-    }
-
-    private fun hideKeyboard() {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(homeSearchInput.windowToken, 0)
-    }
-
-    private fun shareCurrentPage() {
-        val currentUrl = webView.url ?: BASE_URL
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, currentUrl)
-        }
-        try {
-            startActivity(Intent.createChooser(shareIntent, getString(R.string.share)))
-        } catch (e: ActivityNotFoundException) { }
-    }
-
-    private fun detectPageMode(url: String?): PageMode {
-        if (url == null) return PageMode.OTHER
-        val normalized = url.trim()
-        val homeVariants = listOf(BASE_URL, BASE_URL.trimEnd('/'))
-        return if (homeVariants.contains(normalized)) PageMode.HOME else PageMode.OTHER
-    }
-
-    private fun updateTopBarForUrl(url: String?) {
-        currentPageMode = detectPageMode(url)
-        homeSearchBar.visibility = if (currentPageMode == PageMode.HOME) View.VISIBLE else View.GONE
-        updateBackButtonVisibility()
-    }
-
     private fun showLoadingOverlay() {
         loadingLayout.animate().cancel()
         loadingLayout.alpha = 1f
@@ -256,11 +165,6 @@ class MainActivity : AppCompatActivity() {
                 loadingLayout.alpha = 1f
             }
             .start()
-    }
-
-    private fun updateBackButtonVisibility() {
-        val canGoBack = webView.canGoBack()
-        backButtonCard.visibility = if (canGoBack) View.VISIBLE else View.INVISIBLE
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -321,7 +225,6 @@ class MainActivity : AppCompatActivity() {
             override fun onPageStarted(view: WebView, url: String?, favicon: android.graphics.Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 showLoadingOverlay()
-                updateTopBarForUrl(url)
             }
 
             override fun onPageFinished(view: WebView, url: String?) {
@@ -329,7 +232,6 @@ class MainActivity : AppCompatActivity() {
                 swipeRefresh.isRefreshing = false
                 progressBar.visibility = View.GONE
                 hideLoadingOverlay()
-                updateTopBarForUrl(url)
             }
 
             override fun onReceivedError(

@@ -1,36 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Niksam Generators Brand Colors -->
-
-    <!-- رنگ اصلی برند نیکسام (سبز انرژی) -->
+    <!-- رنگ‌های برند niksamgenerators.com -->
     <color name="brand_primary">#16A34A</color>
-
-    <!-- رنگ تیره برند برای هدر و بخش‌های صنعتی -->
     <color name="brand_primary_dark">#052E16</color>
-
-    <!-- سبز روشن برای دکمه‌ها و عناصر تعاملی -->
-    <color name="brand_accent">#22C55E</color>
-
-    <!-- رنگ پس‌زمینه تیره مطابق طراحی سایت -->
-    <color name="brand_dark_bg">#071A12</color>
-
-    <!-- رنگ متن روشن -->
     <color name="white">#FFFFFF</color>
-
-    <!-- مشکی -->
     <color name="black">#000000</color>
-
-    <!-- رنگ لودینگ هماهنگ با برند (به جای نارنجی) -->
-    <color name="loading_green">#22C55E</color>
-
-    <!-- آیکون برگشت روی زمینه روشن -->
+    <color name="loading_orange">#22C55E</color>
     <color name="back_icon_dark">#1F2937</color>
-
-    <!-- حاشیه فیلدهای جستجو -->
     <color name="search_border">#D1D5DB</color>
-
-    <!-- پس زمینه فیلد جستجو -->
     <color name="search_field_bg">#F3F4F6</color>
-
 </resources>
